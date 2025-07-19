@@ -1,0 +1,193 @@
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.9.0",
+    "recharts": "https://esm.sh/recharts@^3.1.0",
+    "react-dom": "https://esm.sh/react-dom@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.3",
+    "qrcode": "https://esm.sh/qrcode@^1.5.3"
+  }
+}
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire Department OMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-primary': 'var(--color-brand-primary)',
+              'brand-secondary': 'var(--color-brand-secondary)',
+              'accent-blue': '#3B82F6',
+              'accent-green': '#10B981',
+              'accent-yellow': '#F59E0B',
+              'dark-bg': 'var(--color-bg)',
+              'dark-card': 'var(--color-card)',
+              'dark-border': 'var(--color-border)',
+              'dark-text': 'var(--color-text)',
+              'dark-text-secondary': 'var(--color-text-secondary)',
+            },
+          }
+        }
+      }
+    </script>
+    <style>
+      :root, .theme-code-red {
+        --color-brand-primary: #DC2626;      /* Red-600 */
+        --color-brand-secondary: #3B82F6;    /* Blue-500 */
+        --color-bg: #111827;                 /* Gray-900 */
+        --color-card: #1F2937;               /* Gray-800 */
+        --color-border: #2D3748;             /* Darker, more subtle border */
+        --color-text: #F9FAFB;               /* Gray-100 */
+        --color-text-secondary: #D1D5DB;     /* Gray-300 - IMPROVED CONTRAST */
+      }
+      .theme-sar {
+        --color-brand-primary: #F97316;      /* Orange-500 */
+        --color-brand-secondary: #EF4444;    /* Red-500 */
+        --color-bg: #F3F4F6;                 /* Gray-100 */
+        --color-card: #FFFFFF;               /* White */
+        --color-border: #E5E7EB;             /* Gray-200 */
+        --color-text: #1F2937;               /* Gray-800 */
+        --color-text-secondary: #6B7280;     /* Gray-500 */
+      }
+       .theme-ash {
+        --color-brand-primary: #B91C1C;      /* Red-700 - Deeper, smoldering red */
+        --color-brand-secondary: #F97316;    /* Orange-500 - Fiery ember glow */
+        --color-bg: #262626;                 /* Neutral-800 */
+        --color-card: #404040;               /* Neutral-700 */
+        --color-border: #525252;             /* Neutral-600 */
+        --color-text: #F5F5F5;               /* Neutral-100 */
+        --color-text-secondary: #A3A3A3;     /* Neutral-400 */
+      }
+       .theme-wildland {
+        --color-brand-primary: #FB923C;      /* Orange-400 */
+        --color-brand-secondary: #F59E0B;    /* Amber-500 */
+        --color-bg: #292524;                 /* Stone-800 */
+        --color-card: #166534;               /* Green-800 */
+        --color-border: #15803D;             /* Green-700 */
+        --color-text: #ECFDF5;               /* Green-50 */
+        --color-text-secondary: #A7F3D0;     /* Green-200 */
+      }
+      body {
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        transition: background-color 0.3s, color 0.3s;
+      }
+      
+      /* Custom Scrollbar for Webkit browsers */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--color-card);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--color-border);
+        border-radius: 5px;
+        border: 2px solid var(--color-card);
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555c65;
+      }
+
+
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        .printable-content, .printable-content * {
+          visibility: visible;
+        }
+        .printable-content {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          padding: 1rem;
+          color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+        .printable-label-wrapper, .printable-label-wrapper * {
+            visibility: visible;
+        }
+        .printable-label-wrapper {
+            position: absolute !important;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: auto;
+            background-color: white !important;
+            padding: 1rem;
+            color: black !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        body > #root + div[data-modal-container] {
+            visibility: visible; /* Ensure portal root is visible for printing */
+        }
+        .no-print {
+          display: none !important;
+        }
+        .calendar-print-bg,
+        .printable-content.bg-dark-card {
+            background-color: white !important;
+            color: black !important;
+            border: 1px solid #e5e7eb !important;
+        }
+        .event-print-item {
+          border: 1px solid #ccc;
+        }
+        .event-print-training { background-color: #DBEAFE !important; border-color: #93C5FD !important; }
+        .event-print-maintenance { background-color: #FEF3C7 !important; border-color: #FCD34D !important; }
+        .event-print-public-event { background-color: #D1FAE5 !important; border-color: #A7F3D0 !important; }
+        .event-print-manual-entry { background-color: #E9D5FF !important; border-color: #C4B5FD !important; }
+        .event-print-shift-schedule { background-color: #E5E7EB !important; border-color: #D1D5DB !important; }
+        .time-slot-print { border-color: #e5e7eb !important; }
+        .time-label-print, .calendar-print-text-secondary { color: #6B7280 !important; }
+        .calendar-print-header { border-color: #e5e7eb !important; font-weight: bold; }
+        .day-column-print { border-color: #e5e7eb !important; }
+        .calendar-print-grid-cell { border-color: #e5e7eb !important; }
+        .timed-event-print {
+          border: 1px solid #9ca3af !important;
+          background-color: #e5e7eb !important;
+        }
+        .print-only {
+            display: block !important;
+        }
+        .text-print-red-500 { color: #EF4444 !important; }
+        .text-print-yellow-400 { color: #FBBF24 !important; }
+        .text-print-blue-400 { color: #60A5FA !important; }
+        .text-print-gray-400 { color: #9CA3AF !important; }
+        .text-print-pink-400 { color: #F472B6 !important; }
+      }
+      .toggle-checkbox:checked { right: 0; border-color: #DC2626; } 
+      .toggle-checkbox:checked + .toggle-label { background-color: #DC2626; }
+    </style>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <script>
+      (function() {
+        const theme = localStorage.getItem('fire-oms-theme') || 'theme-code-red';
+        document.body.className = theme;
+      })();
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

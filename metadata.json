@@ -1,0 +1,8 @@
+{
+  "name": "Copy of Code Red v3.4",
+  "description": "A comprehensive, web-based software application designed to manage all core aspects of a modern fire department, from personnel and apparatus to incident reporting and analytics.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "prompt": ""
+}
